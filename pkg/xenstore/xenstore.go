@@ -1,4 +1,13 @@
-package xenstoreclient
+// Copyright (c) 2015, Citrix Systems
+// All rights reserved.
+//
+// Copyright (c) 2015, Apertus Solutions, LLC
+// All rights reserved.
+//
+// File originated from github.com/xenserver/xe-guest-utilities and has
+// been horribly modified.
+
+package xenstore
 
 import (
 	"bufio"
@@ -53,7 +62,7 @@ type Event struct {
 	Data  []byte
 }
 
-type XenStoreClient interface {
+type Client interface {
 	Close() error
 	DO(packet *Packet) (*Packet, error)
 	Read(path string) (string, error)
@@ -147,7 +156,7 @@ type XenStore struct {
 	nonWatchQueue    chan []byte
 }
 
-func NewXenstore(tx uint32) (XenStoreClient, error) {
+func NewClient(tx uint32) (Client, error) {
 	devPath, err := getDevPath()
 	if err != nil {
 		return nil, err
@@ -160,7 +169,7 @@ func NewXenstore(tx uint32) (XenStoreClient, error) {
 	return newXenstore(tx, xbFile)
 }
 
-func newXenstore(tx uint32, rwc io.ReadWriteCloser) (XenStoreClient, error) {
+func newXenstore(tx uint32, rwc io.ReadWriteCloser) (Client, error) {
 	return &XenStore{
 		tx:               tx,
 		xbFile:           rwc,
@@ -350,13 +359,13 @@ func (xs *XenStore) StopWatch() error {
 }
 
 type CachedXenStore struct {
-	xs         XenStoreClient
+	xs         Client
 	writeCache map[string]string
 	lastCommit map[string]time.Time
 }
 
-func NewCachedXenstore(tx uint32) (XenStoreClient, error) {
-	xs, err := NewXenstore(tx)
+func NewCachedClient(tx uint32) (Client, error) {
+	xs, err := NewClient(tx)
 	if err != nil {
 		return nil, err
 	}

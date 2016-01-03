@@ -1,4 +1,4 @@
-package xenstoreclient
+package xenstore
 
 import (
 	"bytes"
