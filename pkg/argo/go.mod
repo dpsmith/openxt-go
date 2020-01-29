@@ -1,3 +1,3 @@
-module github.com/openxt/go-argo
+module github.com/openxt/openxt-go/pkg/argo
 
 go 1.12
