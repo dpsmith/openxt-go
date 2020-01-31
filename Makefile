@@ -16,3 +16,6 @@ build-all-static: build-argo-nc-static
 
 build-argo-nc-static:
 	CGO_ENABLED=0 GOOS=linux $(GOBUILD) $(STATIC_FLAGS) github.com/openxt/openxt-go/cmd/argo-nc
+
+build-dbus-send-static:
+	CGO_ENABLED=0 GOOS=linux $(GOBUILD) $(STATIC_FLAGS) github.com/openxt/openxt-go/cmd/dbus-send
