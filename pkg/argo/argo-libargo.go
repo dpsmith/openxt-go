@@ -1,6 +1,6 @@
-package argo
 // +build libargo
 
+package argo
 // #cgo LDFLAGS: -largo
 // #include <libargo.h>
 // #include <errno.h>
