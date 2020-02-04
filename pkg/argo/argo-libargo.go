@@ -1,3 +1,4 @@
+package argo
 // +build libargo
 
 // #cgo LDFLAGS: -largo
