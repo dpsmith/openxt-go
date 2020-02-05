@@ -12,7 +12,7 @@ import (
 	"os"
 	"syscall"
 	"fmt"
-	"github.com/godbus/dbus"
+	"github.com/godbus/dbus/v5"
     )
 
 func libargo_socket(ct C.int) (res C.int, err error) {

@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"github.com/openxt/openxt-go/pkg/argo"
-	godbus "github.com/godbus/dbus"
+	godbus "github.com/godbus/dbus/v5"
 )
 
 const (
@@ -28,12 +28,15 @@ func ConnectPlatformBus(opts ...godbus.ConnOption) (*godbus.Conn, error) {
 // Connect expands the godbus Connect to accept argo address string
 //   address is of the format: `argo:domid={id},port={number}`
 func Connect(address string, opts ...godbus.ConnOption) (*godbus.Conn, error) {
+	var conn *godbus.Conn
+	var err error
 
 	i := strings.IndexRune(address, ':')
 	if i == -1 {
-		err := errors.New("dbus: invalid bus address (no transport)")
+		err = errors.New("dbus: invalid bus address (no transport)")
 		return nil, err
 	}
+
 	if address[:i] == "argo" {
 		var domid, port int
 
@@ -54,22 +57,25 @@ func Connect(address string, opts ...godbus.ConnOption) (*godbus.Conn, error) {
 			return nil, err
 		}
 
-		conn, err := godbus.NewConn(c.File(), opts...)
+		conn, err = godbus.NewConn(c.File(), opts...)
 		if err != nil {
 			return nil, err
 		}
-		// Should pass conn.auth but it is private and cannot access
-		if err = conn.Auth([]godbus.Auth{godbus.AuthAnonymous(),godbus.AuthExternal("root")}); err != nil {
-			_ = conn.Close()
-			return nil, err
-		}
-		if err = conn.Hello(); err != nil {
-			_ = conn.Close()
-			return nil, err
-		}
-		return conn, nil
-
 	} else {
-		return godbus.Connect(address, opts...)
+		conn, err = godbus.Dial(address, opts...)
+		if err != nil {
+			return nil, err
+		}
 	}
+
+	// Should pass conn.auth but it is private and cannot access
+	if err = conn.Auth([]godbus.Auth{godbus.AuthAnonymous(),godbus.AuthExternal("root")}); err != nil {
+		_ = conn.Close()
+		return nil, err
+	}
+	if err = conn.Hello(); err != nil {
+		_ = conn.Close()
+		return nil, err
+	}
+	return conn, nil
 }
