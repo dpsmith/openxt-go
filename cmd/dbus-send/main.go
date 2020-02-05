@@ -10,7 +10,7 @@ import (
 
 	flag "github.com/spf13/pflag"
 	"github.com/openxt/openxt-go/pkg/argo/dbus"
-	godbus "github.com/godbus/dbus"
+	godbus "github.com/godbus/dbus/v5"
 )
 
 var (
