@@ -22,12 +22,7 @@ type Dbd struct {
 	conn *dbus.Conn
 }
 
-func NewClient() (Client, error) {
-	conn, err := dbus.SystemBus()
-
-	if err != nil {
-		return nil, err
-	}
+func NewClient(conn *dbus.Conn) (Client, error) {
 	return &Dbd{
 		conn: conn,
 	}, nil
