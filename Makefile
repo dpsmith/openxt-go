@@ -15,8 +15,8 @@ exec_prefix = $(prefix)
 bindir = $(exec_prefix)/bin
 
 PKGBASE := github.com/openxt/openxt-go
-PKGS := argo db ioctl
-CMDS := argo-nc db-cmd dbus-send dbd
+PKGS := argo db ioctl agent/provisioner installer
+CMDS := argo-nc db-cmd dbus-send dbd prov-agent
 VERSION := 0.1.0
 
 # FIPS is not available until Go 1.24
@@ -28,6 +28,10 @@ FLAGS = -a -ldflags '-s -w -extldflags "-static"'
 else
 ENV = ${FIPS}
 FLAGS = -ldflags="-s -w"
+endif
+
+ifeq (1,${ARGO})
+TAGS = -tags argo
 endif
 
 all: ${CMDS}
@@ -60,4 +64,4 @@ pkgsite: gobin
 
 
 ${CMDS}: gobin dep
-	$(ENV) $(GOBUILD) -o $(GOBIN)/$@ $(FLAGS) $(PKGBASE)/cmd/$@
+	$(ENV) $(GOBUILD) $(TAGS) -o $(GOBIN)/$@ $(FLAGS) $(PKGBASE)/cmd/$@
